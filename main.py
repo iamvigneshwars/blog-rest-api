@@ -4,7 +4,6 @@ from pydantic import BaseModel
 from typing import Optional
 from random import randrange
 
-from regex import F
 
 
 app = FastAPI()
@@ -71,3 +70,19 @@ def delete_post(id: int):
 
     return Response(status_code = status.HTTP_204_NO_CONTENT)
 
+
+
+
+@app.put("/posts/{id}")
+def udpate_post(id : int, post : Post):
+    print(post)
+
+    index = find_index_post(id)
+    if (not index):
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail = f'Post with id: {id} was not found')
+
+    post_dict = post.dict()
+    post_dict['id'] = id
+    my_posts[index] = post_dict
+
+    return {'data' : post_dict}
