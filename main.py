@@ -1,7 +1,9 @@
-from fastapi import FastAPI
+from aiohttp import Payload
+from fastapi import FastAPI, Response, status, HTTPException
 from fastapi.params import Body
 from pydantic import BaseModel
 from typing import Optional
+from random import randrange
 
 
 app = FastAPI()
@@ -12,15 +14,45 @@ class Post(BaseModel):
     published : bool = True
     rating : Optional[int] = None
 
+my_posts = [
+    {"title" : "TITLE 1", "content" : "This is the first post", "id" : 1},
+
+    {"title" : "TITLE 2", "content" : "I like pizza", "id" : 2}
+]
+
 @app.get("/")
 async def root():
     return {"message": "Hello World"}
 
 @app.get("/posts")
 async def root():
-    return {"message": "This is the post page"}
+    # return {"message": "This is the post page"}
+    print(my_posts[0]["id"])
+    return {"data": my_posts}
 
-@app.post("/create")
+@app.post("/posts", status_code=status.HTTP_201_CREATED)
 def create(post : Post):
-    print(post.dict())
-    return {"message": "Created post"}
+    # print(post.dict())
+    post_dict = post.dict()
+    post_dict['id'] = randrange(0, 1000000000)
+    my_posts.append(post_dict)
+    return {"data": post_dict}
+
+
+def find_post(id):
+    for dict in my_posts:
+        print(dict["id"])
+        if (dict["id"] == (id)):
+            return dict
+
+@app.get("/posts/{id}")
+def get_post(id: int, response: Response):
+    in_post = find_post(int(id))
+    if not in_post:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail = f"post with id: {id} not found")
+        # response.status_code = status.HTTP_404_NOT_FOUND
+        # return {"messgage" : f"Post with ID {id} not found"}
+    # return {"post_detail" : f"here is post {id}"}
+    return {"post" : in_post}
+
+
