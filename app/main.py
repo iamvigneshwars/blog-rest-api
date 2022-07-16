@@ -4,27 +4,18 @@ from pydantic import BaseModel
 from typing import Optional
 from random import randrange
 from . import models
-from .database import engine, SessionLocal
+from .database import engine, get_db
 from sqlalchemy.orm import Session
-
 
 models.Base.metadata.create_all(bind = engine)
 
 app = FastAPI()
-# database
-
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
 
 class Post(BaseModel):
     title : str
     content: str
     published : bool = True
-    rating : Optional[int] = None
+    # rating : Optional[int] = None
 
 my_posts = [
     {"title" : "TITLE 1", "content" : "This is the first post", "id" : 1},
@@ -36,40 +27,46 @@ my_posts = [
 async def root():
     return {"message": "Hello World"}
 
-@app.get('/sql')
-def test_post(db : Session = Depends(get_db)):
-    return {"status " : "success"}
-
+# Get all the posts
 @app.get("/posts")
-async def root():
+def root(db : Session = Depends(get_db)):
     # return {"message": "This is the post page"}
-    print(my_posts[0]["id"])
-    return {"data": my_posts}
+    posts = db.query(models.Post).all()
+    # print(my_posts[0]["id"])
+    return {"data": posts}
 
+# Create a new post in a database
 @app.post("/posts", status_code=status.HTTP_201_CREATED)
-def create(post : Post):
-    # print(post.dict())
-    post_dict = post.dict()
-    post_dict['id'] = randrange(0, 1000000000)
-    my_posts.append(post_dict)
-    return {"data": post_dict}
+def create(post : Post, db: Session = Depends(get_db)):
+   
+    new_post = models.Post(**post.dict())
+
+    db.add(new_post)
+    db.commit()
+    db.refresh(new_post)
+
+    return {"data": new_post}
 
 
-def find_post(id):
-    for dict in my_posts:
-        print(dict["id"])
-        if (dict["id"] == (id)):
-            return dict
+# # Get the post for sepcific id
+# def find_post(id : int, db : Session = Depends(get_db)):
+
+#     posts = db.query(models.Post).all()
+#     print(posts)
+
 
 @app.get("/posts/{id}")
-def get_post(id: int, response: Response):
-    in_post = find_post(int(id))
-    if not in_post:
+def get_post(id: int, db : Session = Depends(get_db)):
+
+    post = db.query(models.Post).where(models.Post.id == id).first()
+    print(post)
+
+    if not post:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail = f"post with id: {id} not found")
         # response.status_code = status.HTTP_404_NOT_FOUND
         # return {"messgage" : f"Post with ID {id} not found"}
     # return {"post_detail" : f"here is post {id}"}
-    return {"post" : in_post}
+    return {"post" : post}
 
 def find_index_post(id):
     for i , p in enumerate(my_posts):
