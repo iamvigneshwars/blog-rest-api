@@ -1,3 +1,4 @@
+from multiprocessing import synchronize
 from fastapi import FastAPI, Response, status, HTTPException, Depends
 from fastapi.params import Body
 from pydantic import BaseModel
@@ -47,55 +48,48 @@ def create(post : Post, db: Session = Depends(get_db)):
 
     return {"data": new_post}
 
-
-# # Get the post for sepcific id
-# def find_post(id : int, db : Session = Depends(get_db)):
-
-#     posts = db.query(models.Post).all()
-#     print(posts)
-
-
+# Get a post with specific ID
 @app.get("/posts/{id}")
 def get_post(id: int, db : Session = Depends(get_db)):
 
     post = db.query(models.Post).where(models.Post.id == id).first()
-    print(post)
 
     if not post:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail = f"post with id: {id} not found")
-        # response.status_code = status.HTTP_404_NOT_FOUND
-        # return {"messgage" : f"Post with ID {id} not found"}
-    # return {"post_detail" : f"here is post {id}"}
+      
     return {"post" : post}
 
-def find_index_post(id):
-    for i , p in enumerate(my_posts):
-        if p['id'] == id:
-            return i
 
+# Delete a post from the database
 @app.delete("/posts/{id}", status_code = status.HTTP_204_NO_CONTENT)
-def delete_post(id: int):
+def delete_post(id: int, db : Session = Depends(get_db)):
     # find the index in the array that has the required ID
-    index = find_index_post(id)
-    if (not index):
+
+    post = db.query(models.Post).where(models.Post.id == id)
+
+    if post.first() == None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail = f'Post with id: {id} was not found')
-    my_posts.pop(index)
+
+    post.delete(synchronize_session = False)
+    db.commit()
 
     return Response(status_code = status.HTTP_204_NO_CONTENT)
 
 
-
-
+# Update a post in the database
 @app.put("/posts/{id}")
-def udpate_post(id : int, post : Post):
-    print(post)
+def update_post(id : int, updated_post : Post, db : Session = Depends(get_db)):
 
-    index = find_index_post(id)
-    if (not index):
+    post_query = db.query(models.Post).filter(models.Post.id == id)
+
+    post = post_query.first()
+
+    # index = find_index_post(id)
+    if post == None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail = f'Post with id: {id} was not found')
 
-    post_dict = post.dict()
-    post_dict['id'] = id
-    my_posts[index] = post_dict
+    # print(**post_in.dict())
+    post_query.update(update_post.dict())
+    db.commit()
 
-    return {'data' : post_dict}
+    return {'data' : post_query.first()}
