@@ -1,3 +1,4 @@
+from numpy import std
 from pydantic import BaseModel, EmailStr
 from datetime import datetime
 
@@ -29,3 +30,7 @@ class UserOut(BaseModel):
 
     class Config:
         orm_mode = True
+
+class Login(BaseModel):
+    email : EmailStr
+    password : str

@@ -1,13 +1,13 @@
 from .. import models, schemas, utils
-from fastapi import APIRouter, FastAPI, Response, status, HTTPException, Depends
+from fastapi import APIRouter, Response, status, HTTPException, Depends
 from sqlalchemy.orm import Session
 from ..database import get_db
 from typing import List
 
-router = APIRouter()
+router = APIRouter(prefix = '/posts', tags=["Posts"])
 
 # Get all the posts
-@router.get("/posts", response_model = List[schemas.PostResponse])
+@router.get("/",  response_model = List[schemas.PostResponse])
 def root(db : Session = Depends(get_db)):
 
     posts = db.query(models.Post).all()
@@ -15,7 +15,7 @@ def root(db : Session = Depends(get_db)):
     return posts 
 
 # Create a new post in a database
-@router.post("/posts", status_code=status.HTTP_201_CREATED, response_model=schemas.PostResponse)
+@router.post("/", status_code=status.HTTP_201_CREATED, response_model=schemas.PostResponse)
 def create(post : schemas.PostCreate, db: Session = Depends(get_db)):
    
     new_post = models.Post(**post.dict())
@@ -28,7 +28,7 @@ def create(post : schemas.PostCreate, db: Session = Depends(get_db)):
     return new_post 
 
 # Get a post with specific ID
-@router.get("/posts/{id}", response_model = schemas.PostResponse)
+@router.get("/{id}", response_model = schemas.PostResponse)
 def get_post(id: int, db : Session = Depends(get_db)):
 
     post = db.query(models.Post).where(models.Post.id == id).first()
@@ -40,7 +40,7 @@ def get_post(id: int, db : Session = Depends(get_db)):
 
 
 # Delete a post from the database
-@router.delete("/posts/{id}", status_code = status.HTTP_204_NO_CONTENT)
+@router.delete("/{id}", status_code = status.HTTP_204_NO_CONTENT)
 def delete_post(id: int, db : Session = Depends(get_db)):
 
     post = db.query(models.Post).where(models.Post.id == id)
@@ -55,7 +55,7 @@ def delete_post(id: int, db : Session = Depends(get_db)):
 
 
 # Update a post in the database
-@router.put("/posts/{id}", response_model = schemas.PostResponse)
+@router.put("/{id}", response_model = schemas.PostResponse)
 def update_post(id : int, updated_post : schemas.PostCreate, db : Session = Depends(get_db)):
 
     post_query = db.query(models.Post).filter(models.Post.id == id)
