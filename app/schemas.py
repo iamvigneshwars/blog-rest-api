@@ -1,6 +1,9 @@
+from typing import Optional
 from numpy import std
 from pydantic import BaseModel, EmailStr
 from datetime import datetime
+
+from app.database import Base
 
 
 class PostBase(BaseModel):
@@ -34,3 +37,11 @@ class UserOut(BaseModel):
 class Login(BaseModel):
     email : EmailStr
     password : str
+
+
+class Token(BaseModel):
+    token : str
+    token_type : str
+
+class TokenData(BaseModel):
+    id : Optional[str] = None

@@ -12,14 +12,14 @@ def login(credential : OAuth2PasswordRequestForm = Depends(), db : Session = Dep
     user = db.query(models.User).filter(models.User.email == credential.username).first()
 
     if not user:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail= "Invalid Cred")
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail= "Invalid Cred")
 
     # print(user.password)
 
     if not utils.verify(credential.password, user.password):
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail= "Invalid Cred")
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail= "Invalid Cred")
 
 
-    token = oauth2.create_token(data = {"user_email" : user.email})
+    token = oauth2.create_token(data = {"user_id" : user.id})
 
     return {"token" : token, "token_type" : "bearer"}
