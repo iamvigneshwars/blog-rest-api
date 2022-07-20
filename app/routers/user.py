@@ -1,3 +1,5 @@
+from multiprocessing.sharedctypes import synchronized
+from unittest import expectedFailure
 from .. import models, schemas, utils
 from fastapi import APIRouter, FastAPI, Response, status, HTTPException, Depends
 from sqlalchemy.orm import Session
@@ -20,6 +22,9 @@ def create_user(user: schemas.UserCreate, db : Session = Depends(get_db)):
     db.refresh(new_user)
 
     return new_user 
+    
+    # except:
+    #     return HTTPException(status_code = status.HTTP_409_CONFLICT, detail = "User already exist!")
 
 
 # Get all the users
@@ -42,3 +47,15 @@ def get_user(id : int, db : Session = Depends(get_db)):
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail = f'User with id: {id} was not found')
 
     return user
+
+@router.get("/delete/{id}")
+def delete_user(id : int, db : Session = Depends(get_db)):
+
+    user = db.query(models.User).filter(models.User.id == id)
+
+    if not user.first():
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail = "User not found")
+
+    user.delete(synchronize_session = False)
+    db.commit()
+    return Response(status.HTTP_404_NOT_FOUND)
