@@ -19,7 +19,9 @@ def root(db : Session = Depends(get_db), current_user : int = Depends(oauth2.get
 @router.post("/", status_code=status.HTTP_201_CREATED, response_model=schemas.PostResponse)
 def create(post : schemas.PostCreate, db: Session = Depends(get_db), current_user : int = Depends(oauth2.get_current_user)):
    
-    new_post = models.Post(**post.dict())
+    new_post = models.Post(owner_id = current_user.id, **post.dict())
+   # print("#######DEBUG########")
+    # print(new_post.owner_id)
     
     # Add the new post content to the database
     db.add(new_post)
