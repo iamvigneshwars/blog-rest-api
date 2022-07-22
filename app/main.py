@@ -6,7 +6,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 router = APIRouter()
 
-# models.Base.metadata.create_all(bind = engine)
+models.Base.metadata.create_all(bind = engine)
 
 app = FastAPI()
 
