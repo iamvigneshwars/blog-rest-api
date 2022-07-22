@@ -1,5 +1,4 @@
 from typing import Optional
-from numpy import std
 from pydantic import BaseModel, EmailStr
 from datetime import datetime
 

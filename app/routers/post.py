@@ -1,4 +1,3 @@
-from regex import P
 from .. import models, schemas, utils, oauth2
 from fastapi import APIRouter, Response, status, HTTPException, Depends
 from sqlalchemy.orm import Session

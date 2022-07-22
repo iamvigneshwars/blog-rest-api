@@ -1,4 +1,3 @@
-from matplotlib.pyplot import text
 from sqlalchemy import TIMESTAMP, Column, ForeignKey
 from sqlalchemy.orm import relationship
 from . database import Base
