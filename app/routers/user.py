@@ -13,6 +13,12 @@ router = APIRouter(prefix = "/users", tags=['Users'])
 @router.post("/", status_code=status.HTTP_201_CREATED, response_model = schemas.UserOut)
 def create_user(user: schemas.UserCreate, db : Session = Depends(get_db)):
 
+
+    # Check if the user already exists and return conflict status
+    already_exists = db.query(models.User).filter(models.User.email == user.email).first()
+    if already_exists:
+        raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail= "User already exists!")
+
     # Hash the password
     user.password = utils.hash(user.password)
     new_user = models.User(**user.dict())
@@ -23,9 +29,6 @@ def create_user(user: schemas.UserCreate, db : Session = Depends(get_db)):
 
     return new_user 
     
-    # except:
-    #     return HTTPException(status_code = status.HTTP_409_CONFLICT, detail = "User already exist!")
-
 
 # Get all the users
 # @router.get("/users", response_model = List[schemas.UserCreate])
@@ -48,7 +51,8 @@ def get_user(id : int, db : Session = Depends(get_db)):
 
     return user
 
-@router.get("/delete/{id}")
+# Delete a User
+@router.delete("/delete/{id}")
 def delete_user(id : int, db : Session = Depends(get_db)):
 
     user = db.query(models.User).filter(models.User.id == id)
@@ -58,4 +62,4 @@ def delete_user(id : int, db : Session = Depends(get_db)):
 
     user.delete(synchronize_session = False)
     db.commit()
-    return Response(status.HTTP_404_NOT_FOUND)
+    return Response(status_code= status.HTTP_404_NOT_FOUND)

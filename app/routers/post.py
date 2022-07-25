@@ -8,8 +8,9 @@ router = APIRouter(prefix = '/posts', tags=["Posts"])
 
 # Get all the posts
 @router.get("/",  response_model = List[schemas.PostResponse])
-def root(db : Session = Depends(get_db), current_user : int = Depends(oauth2.get_current_user)):
-    print(current_user.email)
+# def root(db : Session = Depends(get_db), current_user : int = Depends(oauth2.get_current_user)):
+def root(db : Session = Depends(get_db)):
+    # print(current_user.email)
 
     posts = db.query(models.Post).all()
 
