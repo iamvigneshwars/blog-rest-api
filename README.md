@@ -7,3 +7,13 @@
     <img src="https://img.shields.io/pypi/v/fastapi?color=%2334D058&label=pypi%20package" alt="Package version">
 </a>
 </p>
+
+---
+
+# Usage
+
+To start the server, run the following command
+`
+uvicorn app.main:app --reload
+
+`
