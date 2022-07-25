@@ -17,6 +17,8 @@ Blog REST API built using FastAPI with CRUD functionalities allows users to regi
   <img src="doc.png" width="750" />
 </p>
 
+[Live Endpoints](https://blogpost-rest-api.herokuapp.com/docs)
+
 # Config
 
 To connect to a postgres database, create a .env file in the root directory and add the following,
