@@ -37,3 +37,34 @@ SECRET_KEY=<KEY>
 ALGORITHM=<HASING ALGORITHM>
 ACCESS_TOKEN_EXPIRE_MINUTES=<EXPIRE MINUTES>
 ```
+
+# Usage
+
+To start the server, run the following command
+
+```
+uvicorn app.main:app
+
+// during development
+
+uvicorn app.main:app --reload
+```
+Create a new user:
+<p align="left">
+  <img src="demo/create_user.png" width="350" />
+</p>
+
+Login:
+
+Login endpoint takes inputs as form-data. Copy the authentication token to create, edit, or delete a post.
+
+<p align="left">
+  <img src="demo/login.png" />
+</p>
+
+Create Post:
+
+User the access token as Authentication header to create a post.
+<p align="left">
+  <img src="demo/create_post_auth.png" />
+</p>
