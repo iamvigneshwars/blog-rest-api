@@ -68,3 +68,13 @@ User the access token as Authentication header to create a post.
 <p align="left">
   <img src="demo/create_post_auth.png" />
 </p>
+<p align="left">
+  <img src="demo/create_post.png" width = 550 />
+</p>
+
+Update Post:
+
+To update a post, user the access token and the path parameter to specify the post ID.
+<p align="left">
+  <img src="demo/update.png" width = 550 />
+</p>
