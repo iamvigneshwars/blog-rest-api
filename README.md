@@ -59,7 +59,7 @@ Login:
 Login endpoint takes inputs as form-data. Copy the authentication token to create, edit, or delete a post.
 
 <p align="left">
-  <img src="demo/login.png" />
+  <img src="demo/login.png" width = '650'/>
 </p>
 
 Create Post:
@@ -69,12 +69,24 @@ User the access token as Authentication header to create a post.
   <img src="demo/create_post_auth.png" />
 </p>
 <p align="left">
-  <img src="demo/create_post.png" width = 550 />
+  <img src="demo/create_post.png" width = 650 />
 </p>
 
 Update Post:
 
-To update a post, user the access token and the path parameter to specify the post ID.
+To update a post, use the access token and the path parameter to specify the post ID.
 <p align="left">
-  <img src="demo/update.png" width = 550 />
+  <img src="demo/update.png" width = 650 />
 </p>
+
+Delete Post:
+
+To Delete a post, use the access token and the path parameter to specify the post ID to be deleted.
+
+# Requirements
+- [Python](https://www.python.org/downloads/) >= 3.7
+- [FastAPI](https://fastapi.tiangolo.com/)
+- [Uvicorn](https://www.uvicorn.org/)
+- [Sqlalchemy](https://docs.sqlalchemy.org/en/14/dialects/postgresql.html)
+
+
