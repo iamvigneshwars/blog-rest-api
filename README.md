@@ -14,23 +14,26 @@ Blog REST API built using FastAPI with CRUD functionalities allows users to regi
 
 **API Endpoints:**
 
+<p align="center">
+  <img src="doc.png" width="750" />
+</p>
 
+# Config
 
-Users Endpoints:
+To connect to a postgres database, create a .env file in the root directory and add the following,
 
-* Create Users
-* Delete Users
-* Get all Users
-* Get User by ID
+```
+DATABASE_HOSTNAME=<HOSTNAME>
+DATABASE_PORT=<PORT NUMBER>
+DATABASE_PASSWORD=<PASSWORD>
+DATABASE_NAME=<NAME>
+DATABASE_USERNAME=<USERNAME>
+```
 
-Authentication Endpoints:
+To hash the user passwords, add the following to the .env file
 
-* User Login
-
-Posts Endpoints:
-
-* Create Post
-* Delete Post
-* Update Post
-* Get All Posts
-* Get Post by ID
+```
+SECRET_KEY=<KEY>
+ALGORITHM=<HASING ALGORITHM>
+ACCESS_TOKEN_EXPIRE_MINUTES=<EXPIRE MINUTES>
+```
