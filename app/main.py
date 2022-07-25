@@ -26,4 +26,4 @@ app.include_router(auth.router)
 
 @app.get("/")
 def root():
-    return {"Info": "This is an blog post REST API that allows users to create, update, and delete a post"}
+    return {"Info": "This is an blog REST API that allows users register, login, create, delete and update a post."}
